@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — Flux Creatives</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b14; --surface: #0e1220; --surface2: #131827;
+      --border: rgba(255,255,255,0.08); --accent: #6c63ff;
+      --glow: rgba(108,99,255,0.35); --text: #e8eaf6; --muted: #8891b4;
+      --accent2: #ff6584; --font: 'Space Grotesk', sans-serif;
+    }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 2.5rem; width: 100%; max-width: 400px;
+    }
+    .login-logo {
+      text-align: center; margin-bottom: 2rem;
+      font-size: 1.4rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
+    label { font-size: 0.82rem; font-weight: 500; color: var(--muted); }
+    input {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-family: var(--font); font-size: 0.9rem; padding: 0.75rem 1rem; width: 100%;
+      transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+    .login-btn {
+      width: 100%; padding: 0.9rem; background: var(--accent); color: white;
+      border: none; border-radius: 8px; font-family: var(--font); font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .login-btn:hover { opacity: 0.88; box-shadow: 0 0 24px var(--glow); }
+    .error-msg {
+      background: rgba(255,101,132,0.12); border: 1px solid rgba(255,101,132,0.3);
+      border-radius: 8px; color: #ff8fa3; padding: 0.75rem 1rem;
+      font-size: 0.85rem; margin-bottom: 1.25rem;
+    }
+    .back-link { display: block; text-align: center; margin-top: 1.25rem; color: var(--muted); font-size: 0.82rem; text-decoration: none; }
+    .back-link:hover { color: var(--accent); }
+    .hint { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">⚡ Flux Creatives</div>
+    <h2>Admin Login</h2>
+    <p class="subtitle">Sign in to manage customer requests</p>
+
+    {% if error %}
+    <div class="error-msg">⚠ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/admin/login">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="admin" required autofocus />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="login-btn">Sign In →</button>
+    </form>
+
+    <a href="/" class="back-link">← Back to website</a>
+    <p class="hint">Default credentials: admin / admin123</p>
+  </div>
+</body>
+</html>
