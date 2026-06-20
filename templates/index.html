@@ -469,13 +469,13 @@
           </div>
           <div class="form-group">
             <label for="email">Email Address *</label>
-            <input type="email" id="email" placeholder="you@company.com" required />
-            <span class="field-error" id="err_email"></span>
+            <input type="email" id="email" placeholder="you@company.com" />
+            <!-- <span class="field-error" id="err_email"></span> -->
           </div>
           <div class="form-group">
-            <label for="phone">Phone Number *</label>
+            <label for="phone">Phone Number</label>
             <input type="tel" id="phone" placeholder="9876543210" maxlength="10" />
-            <span class="field-error" id="err_phone"></span>
+            <!-- <span class="field-error" id="err_phone"></span> -->
           </div>
           <div class="form-group full">
             <label for="how_contacted">How did you find us? *</label>
@@ -542,7 +542,8 @@
     const clearErr = id => document.getElementById(id).textContent = '';
     const setErr = (id, msg) => { document.getElementById(id).textContent = msg; valid = false; };
 
-    ['err_name','err_company','err_email','err_phone','err_how','err_req'].forEach(clearErr);
+    // ['err_name','err_company','err_email','err_phone','err_how','err_req'].forEach(clearErr);
+    ['err_name','err_company','err_how','err_req'].forEach(clearErr);
 
     const name = document.getElementById('requestor_name').value.trim();
     const company = document.getElementById('company_name').value.trim();
@@ -553,8 +554,8 @@
 
     if (!name) setErr('err_name', 'Name is required.');
     if (!company) setErr('err_company', 'Company name is required.');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) setErr('err_email', 'Valid email is required.');
-    if (!phone || phone.length !== 10) setErr('err_phone', 'Enter a valid 10-digit phone number.');
+    // if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) setErr('err_email', 'Valid email is required.');
+    // if (!phone || phone.length !== 10) setErr('err_phone', 'Enter a valid 10-digit phone number.');
     if (!how) setErr('err_how', 'Please select how you found us.');
     if (!req) setErr('err_req', 'Please describe your requirement.');
 
