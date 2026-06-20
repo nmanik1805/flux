@@ -58,8 +58,8 @@ def submit_request():
     
     # Validate phone number
     phone = data.get('phone', '').strip()
-    if not phone.isdigit() or len(phone) != 10:
-        return jsonify({'success': False, 'message': 'Phone number must be exactly 10 digits.'}), 400
+    # if not phone.isdigit() or len(phone) != 10:
+    #     return jsonify({'success': False, 'message': 'Phone number must be exactly 10 digits.'}), 400
     
     doc = {
         'requestor_name': data.get('requestor_name', '').strip(),
@@ -263,6 +263,6 @@ def api_stats():
         'active': active_count,
         'completed': completed
     })
-
+ 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
