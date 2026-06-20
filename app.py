@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import os
 import json
 
@@ -17,6 +17,23 @@ requests_col = db['customer_requests']
 users_col = db['admin_users']
 settings_col = db['settings']
 
+
+# ── Timezone ──────────────────────────────────────────────
+IST = timezone(timedelta(hours=5, minutes=30))
+
+def now_ist():
+    return datetime.now(IST)
+
+def format_ist(dt):
+    if dt is None:
+        return '—'
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc).astimezone(IST)
+    else:
+        dt = dt.astimezone(IST)
+    return dt.strftime('%d %b %Y, %I:%M %p IST')
+# ──────────────────────────────────────────────────────────
+
 # Initialize default admin user if not exists
 def init_admin():
     if users_col.count_documents({}) == 0:
@@ -24,7 +41,7 @@ def init_admin():
             'username': 'admin',
             'password': generate_password_hash('admin123'),
             'role': 'super_admin',
-            'created_at': datetime.utcnow()
+            'created_at': now_ist()
         })
 
 init_admin()
@@ -53,8 +70,8 @@ def submit_request():
         'requirement': data.get('requirement', '').strip(),
         'status': 'Customer Contacted',
         'assignee': None,
-        'created_at': datetime.utcnow(),
-        'updated_at': datetime.utcnow()
+        'created_at': now_ist(),
+        'updated_at': now_ist()
     }
     
     requests_col.insert_one(doc)
@@ -119,9 +136,9 @@ def api_projects():
     for d in docs:
         d['_id'] = str(d['_id'])
         if d.get('created_at'):
-            d['created_at'] = d['created_at'].strftime('%d %b %Y, %I:%M %p')
+           d['created_at'] = format_ist(d.get('created_at'))
         if d.get('updated_at'):
-            d['updated_at'] = d['updated_at'].strftime('%d %b %Y, %I:%M %p')
+            d['updated_at'] = format_ist(d.get('updated_at'))
     
     return jsonify(docs)
 
@@ -136,7 +153,7 @@ def api_update_project(project_id):
     if 'assignee' in data:
         update_fields['assignee'] = data['assignee'] if data['assignee'] else None
     
-    update_fields['updated_at'] = datetime.utcnow()
+    update_fields['updated_at'] = now_ist()
     
     requests_col.update_one(
         {'_id': ObjectId(project_id)},
@@ -157,9 +174,9 @@ def api_get_project(project_id):
     if doc:
         doc['_id'] = str(doc['_id'])
         if doc.get('created_at'):
-            doc['created_at'] = doc['created_at'].strftime('%d %b %Y, %I:%M %p')
+           doc['created_at'] = format_ist(doc.get('created_at'))
         if doc.get('updated_at'):
-            doc['updated_at'] = doc['updated_at'].strftime('%d %b %Y, %I:%M %p')
+            doc['updated_at'] = format_ist(doc.get('updated_at'))
         return jsonify(doc)
     return jsonify({'error': 'Not found'}), 404
 
@@ -196,7 +213,7 @@ def api_create_user():
         'username': username,
         'password': generate_password_hash(password),
         'role': role,
-        'created_at': datetime.utcnow()
+        'created_at': now_ist()
     })
     return jsonify({'success': True})
 
