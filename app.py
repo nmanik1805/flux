@@ -51,7 +51,7 @@ def submit_request():
         'phone': phone,
         'how_contacted': data.get('how_contacted', '').strip(),
         'requirement': data.get('requirement', '').strip(),
-        'status': 'New',
+        'status': 'Customer Contacted',
         'assignee': None,
         'created_at': datetime.utcnow(),
         'updated_at': datetime.utcnow()
@@ -237,7 +237,7 @@ def api_reset_password(user_id):
 @admin_required
 def api_stats():
     total = requests_col.count_documents({})
-    new_count = requests_col.count_documents({'status': 'New'})
+    new_count = requests_col.count_documents({'status': 'Customer Contacted'})
     active_count = requests_col.count_documents({'status': {'$ne': 'completed'}})
     completed = requests_col.count_documents({'status': 'completed'})
     return jsonify({
