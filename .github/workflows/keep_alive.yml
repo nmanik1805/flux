@@ -7,4 +7,4 @@ jobs:
     runs-down: ubuntu-latest
     steps:
       - name: Ping Health Endpoint
-        run: curl -I https://flux-vcz7.onrender.com/health
+        run: curl -I https://flux-vcz7.onrender.com
