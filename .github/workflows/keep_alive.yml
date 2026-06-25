@@ -4,7 +4,7 @@ on:
     - cron: '*/5 * * * *' # Runs every 5 minutes
 jobs:
   ping:
-    runs-down: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Ping Health Endpoint
         run: curl -I https://flux-vcz7.onrender.com/check
