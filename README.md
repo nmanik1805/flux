@@ -84,10 +84,10 @@ Password: admin123
 - Eye button to view full project details
 
 ### Status Values
-`New` → `Discussion` → `Draft` → `Confirmation` → `Payment` → `Completed`
+`Customer Contacted` → `Discussion` → `Draft Video` → `Approval` → `Final Video` → `Payment` → `Delivered`
 
 ### Assignee Values
-`CRM`, `Dev1`, `Dev2`
+`Shanto jose`, `Philbin`, `Manikandan`
 
 ### User Management (Super Admin only)
 - View all admin users
@@ -108,7 +108,7 @@ Password: admin123
 | Requirement     | Textarea | Required                       |
 
 On submit, MongoDB stores the record with:
-- `status: "New"`
+- `status: "Customer Contacted"`
 - `assignee: null`
 - `created_at`, `updated_at` timestamps
 

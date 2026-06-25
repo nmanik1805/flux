@@ -120,8 +120,8 @@
     .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     /* TABLE */
-    .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-    table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); position: relative; }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
     thead th {
       background: var(--surface2); padding: 0.75rem 1rem; text-align: left;
       font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase;
@@ -132,18 +132,29 @@
     tbody td { padding: 0.85rem 1rem; font-size: 0.85rem; vertical-align: top; }
     tbody td .cell-secondary { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
 
+    /* FROZEN FIRST COLUMN */
+    .col-frozen {
+      position: sticky; left: 0; z-index: 2;
+      background: var(--surface);
+      border-right: 2px solid rgba(108,99,255,0.2);
+      min-width: 160px; max-width: 200px;
+    }
+    thead .col-frozen { background: var(--surface2); z-index: 3; }
+    tbody tr:hover .col-frozen { background: #111827; }
+
     /* STATUS BADGE */
     .status-badge {
       display: inline-block; padding: 0.2rem 0.6rem; border-radius: 100px;
       font-size: 0.7rem; font-weight: 600; font-family: var(--mono);
     }
-    .status-Customer-Contacted { background: rgba(108,99,255,0.15); color: #a89fff; }
-    .status-Discussion         { background: rgba(250,204,21,0.15);  color: #fde68a; }
-    .status-Draft-Video        { background: rgba(56,189,248,0.15);  color: #7dd3fc; }
-    .status-Approval           { background: rgba(251,146,60,0.15);  color: #fed7aa; }
-    .status-Final-Video        { background: rgba(192,132,252,0.15); color: #e9d5ff; }
-    .status-Payment            { background: rgba(74,222,128,0.15);  color: #bbf7d0; }
-    .status-Delivered          { background: rgba(74,222,128,0.25);  color: var(--green); }
+    .status-New                 { background: rgba(108,99,255,0.15);  color: #a89fff; }
+    .status-Initial-Discussion  { background: rgba(250,204,21,0.15);  color: #fde68a; }
+    .status-Draft-Video         { background: rgba(56,189,248,0.15);  color: #7dd3fc; }
+    .status-Approval-Pending    { background: rgba(251,146,60,0.15);  color: #fed7aa; }
+    .status-Awaiting-Payment    { background: rgba(74,222,128,0.15);  color: #bbf7d0; }
+    .status-Final-Video         { background: rgba(192,132,252,0.15); color: #e9d5ff; }
+    .status-Delivered           { background: rgba(74,222,128,0.25);  color: var(--green); }
+    .status-Cancelled           { background: rgba(248,113,113,0.15); color: #fca5a5; }
 
     /* PROGRESS BAR */
     .progress-wrap { min-width: 110px; }
@@ -163,16 +174,34 @@
     .pct-17  { color: #7dd3fc; }
     .pct-33  { color: #fde68a; }
     .pct-50  { color: #fdba74; }
-    .pct-67  { color: #e9d5ff; }
-    .pct-83  { color: #86efac; }
+    .pct-67  { color: #bbf7d0; }
+    .pct-83  { color: #e9d5ff; }
     .pct-100 { color: var(--green); }
+    .pct-cancelled { color: #fca5a5; }
     .bar-0   { background: linear-gradient(90deg, #6c63ff, #a89fff); }
     .bar-17  { background: linear-gradient(90deg, #0284c7, #7dd3fc); }
     .bar-33  { background: linear-gradient(90deg, #ca8a04, #fde68a); }
     .bar-50  { background: linear-gradient(90deg, #ea580c, #fdba74); }
-    .bar-67  { background: linear-gradient(90deg, #7c3aed, #e9d5ff); }
-    .bar-83  { background: linear-gradient(90deg, #16a34a, #86efac); }
+    .bar-67  { background: linear-gradient(90deg, #16a34a, #bbf7d0); }
+    .bar-83  { background: linear-gradient(90deg, #7c3aed, #e9d5ff); }
     .bar-100 { background: linear-gradient(90deg, #15803d, var(--green)); box-shadow: 0 0 8px rgba(74,222,128,0.5); }
+    .bar-cancelled { background: linear-gradient(90deg, #dc2626, #fca5a5); }
+
+    /* COMMENT CELL */
+    .comment-cell {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px; color: #4a5268; font-family: var(--font);
+      font-size: 0.75rem; padding: 0.35rem 0.5rem; resize: none;
+      width: 150px; height: 50px; cursor: default; display: block;
+    }
+
+    /* SEARCH BOX */
+    .search-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: var(--font);
+      font-size: 0.88rem; padding: 0.6rem 1rem; width: 320px; max-width: 100%;
+    }
+    .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.12); }
 
     /* INLINE SELECTS */
     .inline-select {
@@ -365,6 +394,9 @@
         <button class="tab-btn active" id="tab-active" onclick="switchTab('active')">Active Projects</button>
         <button class="tab-btn" id="tab-all" onclick="switchTab('all')">All Projects</button>
       </div>
+      <div style="margin-bottom:1rem;">
+        <input class="search-box" type="text" id="projectSearch" placeholder="🔍  Search by name, company, email, status, assignee..." oninput="onSearchInput(this.value)" />
+      </div>
       <div id="projectsTable"><div style="padding:2rem;text-align:center;"><div class="spinner"></div></div></div>
     </div>
 
@@ -393,13 +425,14 @@
     <div class="modal-form-group">
       <label>Status</label>
       <select id="edit-status">
-        <option value="Customer Contacted">Customer Contacted</option>
-        <option value="Discussion">Discussion</option>
+        <option value="New">New</option>
+        <option value="Initial Discussion">Initial Discussion</option>
         <option value="Draft Video">Draft Video</option>
-        <option value="Approval">Approval</option>
+        <option value="Approval Pending">Approval Pending</option>
+        <option value="Awaiting Payment">Awaiting Payment</option>
         <option value="Final Video">Final Video</option>
-        <option value="Payment">Payment</option>
         <option value="Delivered">Delivered</option>
+        <option value="Cancelled">Cancelled</option>
       </select>
     </div>
     <div class="modal-form-group">
@@ -410,6 +443,10 @@
         <option value="Philbin">Philbin</option>
         <option value="Manikandan">Manikandan</option>
       </select>
+    </div>
+    <div class="modal-form-group">
+      <label>Comments</label>
+      <textarea id="edit-comments" placeholder="Add notes or comments..." style="min-height:90px;"></textarea>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
@@ -500,6 +537,13 @@
 <script>
   let currentTab = 'active';
   let allProjects = [];
+  let searchQuery = '';
+
+  // ─── UTILITIES ───────────────────────────────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
   // ─── PAGE / SIDEBAR ─────────────────────────────────────────────────────────
   function showPage(name, btn) {
@@ -548,14 +592,14 @@
     loadStatusTiles();
   }
 
-  // ─── STATUS TILES (6 tiles, every status except Delivered) ───────────────────
+  // ─── STATUS TILES (6 active statuses, excluding Delivered & Cancelled) ────────
   const TILE_STATUSES = [
-    { name: 'Customer Contacted', color: '#a89fff' },
-    { name: 'Discussion',         color: '#fde68a' },
+    { name: 'New',                color: '#a89fff' },
+    { name: 'Initial Discussion', color: '#fde68a' },
     { name: 'Draft Video',        color: '#7dd3fc' },
-    { name: 'Approval',           color: '#fed7aa' },
+    { name: 'Approval Pending',   color: '#fed7aa' },
+    { name: 'Awaiting Payment',   color: '#bbf7d0' },
     { name: 'Final Video',        color: '#e9d5ff' },
-    { name: 'Payment',            color: '#bbf7d0' },
   ];
 
   async function loadStatusTiles() {
@@ -607,25 +651,52 @@
     el.innerHTML = '<div style="padding:2rem;text-align:center;"><div class="spinner"></div></div>';
     const res = await fetch('/admin/api/projects?tab=' + currentTab);
     allProjects = await res.json();
-    renderProjectsTable(allProjects, currentTab);
+    filterProjects();
   }
 
   function switchTab(tab) {
     currentTab = tab;
     document.getElementById('tab-active').classList.toggle('active', tab === 'active');
     document.getElementById('tab-all').classList.toggle('active', tab === 'all');
+    searchQuery = '';
+    const searchEl = document.getElementById('projectSearch');
+    if (searchEl) searchEl.value = '';
     loadProjects();
+  }
+
+  // ─── SEARCH / FILTER ────────────────────────────────────────────────────────
+  function onSearchInput(val) {
+    searchQuery = val.trim().toLowerCase();
+    filterProjects();
+  }
+
+  function filterProjects() {
+    if (!searchQuery) {
+      renderProjectsTable(allProjects, currentTab);
+      return;
+    }
+    const q = searchQuery;
+    const filtered = allProjects.filter(p =>
+      (p.requestor_name || '').toLowerCase().includes(q) ||
+      (p.company_name   || '').toLowerCase().includes(q) ||
+      (p.email          || '').toLowerCase().includes(q) ||
+      (p.status         || '').toLowerCase().includes(q) ||
+      (p.assignee       || '').toLowerCase().includes(q) ||
+      (p.comments       || '').toLowerCase().includes(q)
+    );
+    renderProjectsTable(filtered, currentTab);
   }
 
   // Progress config: status → { pct, label }
   const PROGRESS_MAP = {
-    'Customer Contacted': { pct: 0,   label: 'Contacted 📞'  },
-    'Discussion':         { pct: 17,  label: 'Discussing 💬' },
-    'Draft Video':        { pct: 33,  label: 'Drafting 🎬'   },
-    'Approval':           { pct: 50,  label: 'In Review ✅'  },
-    'Final Video':        { pct: 67,  label: 'Finalising 🎥' },
-    'Payment':            { pct: 83,  label: 'Payment 💳'    },
-    'Delivered':          { pct: 100, label: 'Delivered 🎉'  },
+    'New':                  { pct: 0,   label: 'New 📞'             },
+    'Initial Discussion':   { pct: 17,  label: 'Discussing 💬'      },
+    'Draft Video':          { pct: 33,  label: 'Drafting 🎬'        },
+    'Approval Pending':     { pct: 50,  label: 'In Review ✅'       },
+    'Awaiting Payment':     { pct: 67,  label: 'Awaiting Payment 💳' },
+    'Final Video':          { pct: 83,  label: 'Finalising 🎥'      },
+    'Delivered':            { pct: 100, label: 'Delivered 🎉'       },
+    'Cancelled':            { pct: 100, label: 'Cancelled ✕'        },
   };
 
   function getProgressColor(pct) {
@@ -640,15 +711,18 @@
 
   function progressBarHTML(status) {
     const info = PROGRESS_MAP[status] || { pct: 0, label: status };
+    const isCancelled = status === 'Cancelled';
     const c = getProgressColor(info.pct);
+    const barClass = isCancelled ? 'bar-cancelled' : ('bar-' + c);
+    const pctClass = isCancelled ? 'pct-cancelled' : ('pct-' + c);
     return `
       <div class="progress-wrap">
         <div class="progress-header">
-          <span class="progress-pct pct-${c}">${info.pct}%</span>
+          <span class="progress-pct ${pctClass}">${info.pct}%</span>
           <span class="progress-label">${info.label}</span>
         </div>
         <div class="progress-track">
-          <div class="progress-bar bar-${c}" data-pct="${info.pct}" style="width:0%"></div>
+          <div class="progress-bar ${barClass}" data-pct="${info.pct}" style="width:0%"></div>
         </div>
       </div>`;
   }
@@ -668,50 +742,52 @@
       el.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>No projects found.</p></div>`;
       return;
     }
+    const statuses = ['New','Initial Discussion','Draft Video','Approval Pending','Awaiting Payment','Final Video','Delivered','Cancelled'];
+    const assignees = ['Shanto jose','Philbin','Manikandan'];
     el.innerHTML = `
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Requestor</th>
-              <th>Company</th>
+              <th class="col-frozen">Company</th>
               <th>Contact</th>
               <th>Source</th>
               <th>Status</th>
               <th>Progress</th>
               <th>Assignee</th>
-              <th>Date</th>
+              <th>Comments</th>
+              <th>Last Update</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             ${projects.map(p => {
-              const showEdit = tab === 'all' || p.status !== 'Delivered';
+              const showEdit = tab === 'all' || (p.status !== 'Delivered' && p.status !== 'Cancelled');
               return `
               <tr>
-                <td><div>${p.requestor_name}</div><div class="cell-secondary">${p.email}</div></td>
-                <td>${p.company_name}</td>
-                <td>${p.phone}</td>
-                <td><div style="font-size:0.78rem;color:var(--muted);">${p.how_contacted}</div></td>
+                <td class="col-frozen"><div style="font-weight:500;">${escHtml(p.company_name)}</div><div class="cell-secondary">${escHtml(p.email)}</div></td>
+                <td>${escHtml(p.phone)}</td>
+                <td><div style="font-size:0.78rem;color:var(--muted);">${escHtml(p.how_contacted)}</div></td>
                 <td>
                   ${showEdit ? `
                   <select class="inline-select" onchange="quickUpdateStatus('${p._id}', this.value)">
-                    ${['Customer Contacted','Discussion','Draft Video','Approval','Final Video','Payment','Delivered'].map(s => `<option ${p.status===s?'selected':''} value="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
-                  </select>` : `<span class="status-badge status-${p.status.replace(/\s+/g,'-')}">${p.status}</span>`}
+                    ${statuses.map(s => `<option ${p.status===s?'selected':''} value="${s}">${s}</option>`).join('')}
+                  </select>` : `<span class="status-badge status-${p.status.replace(/\s+/g,'-')}">${escHtml(p.status)}</span>`}
                 </td>
                 <td>${progressBarHTML(p.status)}</td>
                 <td>
                   ${showEdit ? `
                   <select class="inline-select" onchange="quickUpdateAssignee('${p._id}', this.value)">
                     <option value="" ${!p.assignee?'selected':''}>— None —</option>
-                    ${['Shanto jose','Philbin','Manikandan'].map(a => `<option ${p.assignee===a?'selected':''} value="${a}">${a}</option>`).join('')}
-                  </select>` : `<span style="color:var(--muted);">${p.assignee||'—'}</span>`}
+                    ${assignees.map(a => `<option ${p.assignee===a?'selected':''} value="${a}">${a}</option>`).join('')}
+                  </select>` : `<span style="color:var(--muted);">${escHtml(p.assignee)||'—'}</span>`}
                 </td>
-                <td style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">${p.created_at}</td>
+                <td><textarea class="comment-cell" readonly>${escHtml(p.comments||'')}</textarea></td>
+                <td style="font-size:0.78rem;color:var(--muted);white-space:nowrap;">${p.updated_at||'—'}</td>
                 <td>
                   <div class="btn-actions">
                     <button class="btn-icon" title="View" onclick="viewProject('${p._id}')">👁</button>
-                    ${showEdit ? `<button class="btn-icon" title="Edit" onclick="openEditModal('${p._id}','${p.status}','${p.assignee||''}')">✏️</button>` : ''}
+                    ${showEdit ? `<button class="btn-icon" title="Edit" onclick="openEditModal('${p._id}')">✏️</button>` : ''}
                     <button class="btn-icon danger" title="Delete" onclick="openDeleteModal('${p._id}')">🗑</button>
                   </div>
                 </td>
@@ -749,20 +825,23 @@
     showToast('Assignee updated');
   }
 
-  function openEditModal(id, status, assignee) {
+  function openEditModal(id) {
+    const p = allProjects.find(x => x._id === id);
     document.getElementById('edit-project-id').value = id;
-    document.getElementById('edit-status').value = status;
-    document.getElementById('edit-assignee').value = assignee;
+    document.getElementById('edit-status').value    = p ? p.status          : '';
+    document.getElementById('edit-assignee').value  = p ? (p.assignee || '') : '';
+    document.getElementById('edit-comments').value  = p ? (p.comments || '') : '';
     openModal('editModal');
   }
 
   async function saveProject() {
-    const id = document.getElementById('edit-project-id').value;
-    const status = document.getElementById('edit-status').value;
+    const id       = document.getElementById('edit-project-id').value;
+    const status   = document.getElementById('edit-status').value;
     const assignee = document.getElementById('edit-assignee').value;
+    const comments = document.getElementById('edit-comments').value;
     await fetch('/admin/api/projects/' + id, {
       method: 'PUT', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({status, assignee})
+      body: JSON.stringify({status, assignee, comments})
     });
     closeModal('editModal');
     showToast('Project updated successfully');
@@ -787,37 +866,46 @@
     const res = await fetch('/admin/api/projects/' + id);
     const p = await res.json();
     const info = PROGRESS_MAP[p.status] || { pct: 0, label: p.status };
+    const isCancelled = p.status === 'Cancelled';
     const c = getProgressColor(info.pct);
+    const barClass = isCancelled ? 'bar-cancelled' : ('bar-' + c);
     const slug = p.status.replace(/\s+/g, '-');
+    const timelineStatuses = ['New','Initial Discussion','Draft Video','Approval Pending','Awaiting Payment','Final Video','Delivered'];
     document.getElementById('viewModalBody').innerHTML = `
       <div class="detail-grid">
-        <div class="detail-item"><label>Requestor Name</label><div class="val">${p.requestor_name}</div></div>
-        <div class="detail-item"><label>Company</label><div class="val">${p.company_name}</div></div>
-        <div class="detail-item"><label>Email</label><div class="val">${p.email}</div></div>
-        <div class="detail-item"><label>Phone</label><div class="val">${p.phone}</div></div>
-        <div class="detail-item"><label>How Contacted</label><div class="val">${p.how_contacted}</div></div>
-        <div class="detail-item"><label>Status</label><div class="val"><span class="status-badge status-${slug}">${p.status}</span></div></div>
-        <div class="detail-item"><label>Assignee</label><div class="val">${p.assignee||'—'}</div></div>
+        <div class="detail-item"><label>Requestor Name</label><div class="val">${escHtml(p.requestor_name)}</div></div>
+        <div class="detail-item"><label>Company</label><div class="val">${escHtml(p.company_name)}</div></div>
+        <div class="detail-item"><label>Email</label><div class="val">${escHtml(p.email)}</div></div>
+        <div class="detail-item"><label>Phone</label><div class="val">${escHtml(p.phone)}</div></div>
+        <div class="detail-item"><label>How Contacted</label><div class="val">${escHtml(p.how_contacted)}</div></div>
+        <div class="detail-item"><label>Status</label><div class="val"><span class="status-badge status-${slug}">${escHtml(p.status)}</span></div></div>
+        <div class="detail-item"><label>Assignee</label><div class="val">${escHtml(p.assignee)||'—'}</div></div>
         <div class="detail-item"><label>Created</label><div class="val">${p.created_at}</div></div>
+        <div class="detail-item"><label>Last Update</label><div class="val">${p.updated_at||'—'}</div></div>
+        <div class="detail-item full">
+          <label>Comments</label>
+          <div class="val" style="margin-top:0.35rem;color:${p.comments?'var(--text)':'var(--muted)'};line-height:1.7;">${escHtml(p.comments)||'No comments yet.'}</div>
+        </div>
         <div class="detail-item full">
           <label>Completion Progress</label>
           <div style="margin-top:0.5rem;">
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-              <span class="progress-pct pct-${c}" style="font-size:1.1rem;">${info.pct}%</span>
+              <span class="progress-pct ${isCancelled?'pct-cancelled':('pct-'+c)}" style="font-size:1.1rem;">${info.pct}%</span>
               <span class="progress-label" style="font-size:0.8rem;">${info.label}</span>
             </div>
             <div class="progress-track" style="height:10px;border-radius:100px;">
-              <div class="progress-bar bar-${c}" data-pct="${info.pct}" style="width:0%;height:10px;border-radius:100px;"></div>
+              <div class="progress-bar ${barClass}" data-pct="${info.pct}" style="width:0%;height:10px;border-radius:100px;"></div>
             </div>
+            ${isCancelled ? '' : `
             <div style="display:flex;justify-content:space-between;margin-top:8px;">
-              ${['Customer Contacted','Discussion','Draft Video','Approval','Final Video','Payment','Delivered'].map(s => {
+              ${timelineStatuses.map(s => {
                 const active = (PROGRESS_MAP[s] || {pct:0}).pct <= info.pct;
-                return `<span style="font-size:0.58rem;color:${active ? 'var(--text)' : 'var(--muted)'};text-align:center;flex:1;line-height:1.4;">${s}</span>`;
+                return `<span style="font-size:0.55rem;color:${active ? 'var(--text)' : 'var(--muted)'};text-align:center;flex:1;line-height:1.4;">${s}</span>`;
               }).join('')}
-            </div>
+            </div>`}
           </div>
         </div>
-        <div class="detail-item full"><label>Requirement</label><div class="val" style="line-height:1.7;">${p.requirement}</div></div>
+        <div class="detail-item full"><label>Requirement</label><div class="val" style="line-height:1.7;">${escHtml(p.requirement)}</div></div>
       </div>`;
     openModal('viewModal');
     animateBars();
