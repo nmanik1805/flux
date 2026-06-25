@@ -55,10 +55,6 @@ init_admin()
 def index():
     return render_template('index.html')
 
-@app.route('/health')
-def health_check():
-    return "up and running fine.",200
-
 @app.route('/submit-request', methods=['POST'])
 def submit_request():
     data = request.get_json()
